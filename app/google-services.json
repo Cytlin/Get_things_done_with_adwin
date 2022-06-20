@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1081616718660",
+    "project_id": "getthings-donewithadwin",
+    "storage_bucket": "getthings-donewithadwin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081616718660:android:bb5ca5cd1405151ee15511",
+        "android_client_info": {
+          "package_name": "com.example.getthingsdonewithadwin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1081616718660-elh3i1kn6q3489pt95c9m0me1r7eifla.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBa_ekm5_bOdfaWB08DVAeshsmhHnJ2Z20"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1081616718660-elh3i1kn6q3489pt95c9m0me1r7eifla.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
