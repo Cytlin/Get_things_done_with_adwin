@@ -3,8 +3,11 @@ package com.example.getthingsdonewithadwin;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -15,6 +18,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.getthingsdonewithadwin.databinding.ActivityMainBinding;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -43,17 +47,22 @@ public class CreateTask extends AppCompatActivity {
     String userId;
     CollectionReference taskRef;
 
+    PendingIntent pendingIntent;
+    AlarmManager alarmManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_task);
 
-        addTaskTitle= findViewById(R.id.addTaskTitle);
-        addTaskDescription= findViewById(R.id.addTaskDescription);
-        taskDate= findViewById(R.id.taskDate);
-        taskTime= findViewById(R.id.taskTime);
-        addTask= findViewById(R.id.addTask);
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        addTaskTitle = findViewById(R.id.addTaskTitle);
+        addTaskDescription = findViewById(R.id.addTaskDescription);
+        taskDate = findViewById(R.id.taskDate);
+        taskTime = findViewById(R.id.taskTime);
+        addTask = findViewById(R.id.addTask);
+
 
         //Disable keyboard
         taskDate.setInputType(InputType.TYPE_NULL);
@@ -75,20 +84,21 @@ public class CreateTask extends AppCompatActivity {
             }
         });
 
-        fAuth= FirebaseAuth.getInstance();
-        fStore= FirebaseFirestore.getInstance();
-        userId= fAuth.getCurrentUser().getUid();
+        fAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+        userId = fAuth.getCurrentUser().getUid();
         user = fAuth.getCurrentUser();
-        taskRef= fStore.collection("users");
+        taskRef = fStore.collection("users");
 
         addTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String taskName= addTaskTitle.getText().toString().trim();
-                String taskDescr= addTaskDescription.getText().toString().trim();
-                String date= taskDate.getText().toString().trim();
-                String time= taskTime.getText().toString().trim();
-                Map<String, Object> task =new HashMap<>();
+
+                String taskName = addTaskTitle.getText().toString().trim();
+                String taskDescr = addTaskDescription.getText().toString().trim();
+                String date = taskDate.getText().toString().trim();
+                String time = taskTime.getText().toString().trim();
+                Map<String, Object> task = new HashMap<>();
                 task.put("taskTitle", taskName);
                 task.put("taskDesc", taskDescr);
                 task.put("taskDate", date);
@@ -97,13 +107,13 @@ public class CreateTask extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Toast.makeText(CreateTask.this, "Task Added successfully", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "Task added successfully for user:"+ userId);
+                        Log.d(TAG, "Task added successfully for user:" + userId);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(CreateTask.this, "Failed to add task", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "Failed"+ e.toString());
+                        Log.d(TAG, "Failed" + e.toString());
                     }
                 });
 
@@ -114,34 +124,58 @@ public class CreateTask extends AppCompatActivity {
 
     }
 
-    private void showDateDialog(EditText taskDate){
-        Calendar calendar= Calendar.getInstance();
-        DatePickerDialog.OnDateSetListener dateSetListener= new DatePickerDialog.OnDateSetListener() {
+
+    public void showDateDialog(EditText taskDate) {
+        Calendar calendar = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, month);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yy-MM-dd");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd");
                 taskDate.setText(simpleDateFormat.format(calendar.getTime()));
             }
         };
-        new DatePickerDialog(CreateTask.this, dateSetListener, calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(CreateTask.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    private void showTimeDialog(EditText taskTime) {
-        Calendar calendar=Calendar.getInstance();
+    public void showTimeDialog(EditText taskTime) {
+        Calendar calendar = Calendar.getInstance();
 
-        TimePickerDialog.OnTimeSetListener timeSetListener=new TimePickerDialog.OnTimeSetListener() {
+        TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
-                calendar.set(Calendar.MINUTE,minute);
-                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm");
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
                 taskTime.setText(simpleDateFormat.format(calendar.getTime()));
+                startAlarm(calendar);
+
             }
         };
 
-        new TimePickerDialog(CreateTask.this,timeSetListener,calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE),false).show();
+        new TimePickerDialog(CreateTask.this, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
     }
+
+//    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+//        Calendar c = Calendar.getInstance();
+//        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+//        c.set(Calendar.MINUTE, minute);
+//        c.set(Calendar.SECOND, 0);
+//        startAlarm(c);
+//    }
+
+    private void startAlarm(Calendar c){
+        AlarmManager alarmManager= (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+
+        if (c.before(Calendar.getInstance())) {
+            c.add(Calendar.DATE, 1);
+        }
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+    }
+
 }

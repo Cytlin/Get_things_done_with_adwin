@@ -3,6 +3,8 @@
     package="com.example.getthingsdonewithadwin">
 
     <uses-permission-sdk-23 android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
 
     <application
         android:allowBackup="true"
@@ -22,7 +24,7 @@
         </activity>
         <activity android:name=".Register"/>
         <activity android:name=".MainActivity" />
-        <receiver android:name=".AlarmReceiver"/>
+        <receiver android:name=".AlertReceiver" />
     </application>
 
 </manifest>
