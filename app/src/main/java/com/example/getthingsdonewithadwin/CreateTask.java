@@ -40,6 +40,7 @@ import static android.content.ContentValues.TAG;
 public class CreateTask extends AppCompatActivity {
     EditText addTaskTitle, taskDate, taskTime, addTaskDescription;
     Button addTask;
+    Boolean valid=true;
 
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
@@ -93,31 +94,37 @@ public class CreateTask extends AppCompatActivity {
         addTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                checkField(addTaskTitle);
+                checkField(addTaskDescription);
+                checkField(taskDate);
+                checkField(taskTime);
+                if(valid){
+                    String taskName = addTaskTitle.getText().toString().trim();
+                    String taskDescr = addTaskDescription.getText().toString().trim();
+                    String date = taskDate.getText().toString().trim();
+                    String time = taskTime.getText().toString().trim();
+                    Map<String, Object> task = new HashMap<>();
+                    task.put("taskTitle", taskName);
+                    task.put("taskDesc", taskDescr);
+                    task.put("taskDate", date);
+                    task.put("taskTime", time);
+                    taskRef.document(userId).collection("tasks").add(task).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Toast.makeText(CreateTask.this, "Task Added successfully", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "Task added successfully for user:" + userId);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(CreateTask.this, "Failed to add task", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "Failed" + e.toString());
+                        }
+                    });
 
-                String taskName = addTaskTitle.getText().toString().trim();
-                String taskDescr = addTaskDescription.getText().toString().trim();
-                String date = taskDate.getText().toString().trim();
-                String time = taskTime.getText().toString().trim();
-                Map<String, Object> task = new HashMap<>();
-                task.put("taskTitle", taskName);
-                task.put("taskDesc", taskDescr);
-                task.put("taskDate", date);
-                task.put("taskTime", time);
-                taskRef.document(userId).collection("tasks").add(task).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(CreateTask.this, "Task Added successfully", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "Task added successfully for user:" + userId);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CreateTask.this, "Failed to add task", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "Failed" + e.toString());
-                    }
-                });
+                    startActivity(new Intent(getApplicationContext(), TasksActivity.class));
+                }
 
-                startActivity(new Intent(getApplicationContext(), TasksActivity.class));
             }
         });
 
@@ -158,13 +165,6 @@ public class CreateTask extends AppCompatActivity {
         new TimePickerDialog(CreateTask.this, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
     }
 
-//    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-//        Calendar c = Calendar.getInstance();
-//        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-//        c.set(Calendar.MINUTE, minute);
-//        c.set(Calendar.SECOND, 0);
-//        startAlarm(c);
-//    }
 
     private void startAlarm(Calendar c){
         AlarmManager alarmManager= (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -176,6 +176,17 @@ public class CreateTask extends AppCompatActivity {
         }
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+    }
+
+    public boolean checkField(EditText textField){
+        if(textField.getText().toString().isEmpty()){
+            textField.setError("All fields are required");
+            valid = false;
+        }else {
+            valid = true;
+        }
+
+        return valid;
     }
 
 }

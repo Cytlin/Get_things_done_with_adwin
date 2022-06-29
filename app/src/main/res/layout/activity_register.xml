@@ -17,6 +17,15 @@
             android:orientation="vertical"
             android:gravity="center_vertical">
 
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:src="@drawable/taskimage"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"/>
             <TextView
                 android:id="@+id/RegisterTxt"
                 android:layout_width="match_parent"
@@ -28,21 +37,15 @@
                 android:text="Register"
                 android:gravity="center_horizontal"
                 android:textStyle="bold"
-                android:textColor="#ed0ff5"
-                android:textAllCaps="true"/>
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:src="@drawable/logo"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"/>
+                android:textColor="#0d656b"
+                android:textAllCaps="true"
+                android:textSize="35dp"
+                android:letterSpacing="0.03"/>
 
             <EditText
                 android:id="@+id/registerName"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
@@ -53,41 +56,45 @@
             <EditText
                 android:id="@+id/registerEmail"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
                 android:ems="10"
                 android:hint="Email Address"
                 android:inputType="textEmailAddress"
-                android:background="@drawable/btn_border"/>
+                android:background="@drawable/btn_border"
+                android:drawableLeft="@android:drawable/ic_dialog_email"/>
 
             <EditText
                 android:id="@+id/registerPassword"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
                 android:ems="10"
                 android:hint="Password"
                 android:inputType="textPassword"
-                android:background="@drawable/btn_border"/>
+                android:background="@drawable/btn_border"
+                android:drawableLeft="@android:drawable/ic_lock_lock"
+                />
             <EditText
                 android:id="@+id/confirmPassword"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
                 android:ems="10"
                 android:hint="Confirm Password"
                 android:inputType="textPassword"
-                android:background="@drawable/btn_border"/>
+                android:background="@drawable/btn_border"
+                android:drawableLeft="@android:drawable/ic_lock_lock"/>
             <Button
                 android:id="@+id/registerBtn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
@@ -97,14 +104,14 @@
             <TextView
                 android:id="@+id/goToLogin"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:textAlignment="center"
                 android:text="Already Registered? Login Here"
                 android:gravity="center_horizontal"
-                android:textColor="#d8a6e3"/>
+                android:textColor="#365070"/>
 
         </LinearLayout>
     </ScrollView>
